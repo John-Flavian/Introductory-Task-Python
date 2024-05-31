@@ -22,20 +22,31 @@ with open(config_path, 'r', encoding='utf-8') as f:
 
 HOST = config.get("host", "localhost")
 PORT = config.get("port", 8080)
-
 PROMPT = config.get("prompt", False)
 QUERY = config.get("query", "hi")
+
+USE_SSL = config.get("use_ssl", False)
+CERTFILE = os.path.join(parent_dir, config.get("certificate_file"))
+KEYFILE = os.path.join(parent_dir, config.get("key_file"))
 
 
 async def send_message(message):
     """ Function to send a message to the server. """
     try:
-        context = None
+        if USE_SSL:
+            context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+            # Additional options to disable SSL verification (dev mode)
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+
+            context.load_cert_chain(certfile=CERTFILE, keyfile=KEYFILE)
+        else:
+            context = None
         reader, writer = await asyncio.open_connection(
-            '135.181.96.160',
-            44445,
-            # HOST,
-            # PORT,
+            # '135.181.96.160',
+            # 44445,
+            HOST,
+            PORT,
             ssl=context
             )
         print("Connected to the server.")

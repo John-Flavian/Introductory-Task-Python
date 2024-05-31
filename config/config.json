@@ -1,4 +1,10 @@
 {
+  "use_ssl": true,
+  "certificate_file": "certs/certificate.pem",
+  "key_file": "certs/key.pem",
+  "txt_file": "files/200k.txt",
+  "reread_on_query": true,
+  "development": true,
   "host": "localhost",
   "port": 8080,
   "prompt": false,
