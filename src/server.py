@@ -4,6 +4,7 @@ import json
 import ssl
 import os
 from datetime import datetime
+import threading
 
 # Watchdog imports
 import sys
@@ -21,7 +22,7 @@ parent_dir = os.path.dirname(src_dir)
 config_dir_path = os.path.join(parent_dir, 'config/config.json')
 
 
-# Load configuration
+# Load configuration function
 def load_config(config_path):
     """ Load the configuration. """
     with open(config_path, 'r', encoding='utf-8') as f:
@@ -29,8 +30,8 @@ def load_config(config_path):
     return data
 
 
-config = load_config(config_dir_path)
 # Define variables
+config = load_config(config_dir_path)
 USE_SSL = config.get("use_ssl", False)
 CERTFILE = os.path.join(parent_dir, config.get("certificate_file"))
 KEYFILE = os.path.join(parent_dir, config.get("key_file"))
@@ -163,7 +164,12 @@ if __name__ == "__main__":
         observer.schedule(event_handler, path, recursive=True)
         observer.start()
         try:
-            asyncio.run(main())
+            thread1 = threading.Thread(target=asyncio.run(main()))
+            thread2 = threading.Thread(target=asyncio.run(main()))
+            thread1.start()
+            thread2.start()
+            thread1.join()
+            thread2.join()
             while True:
                 time.sleep(1)
         except KeyboardInterrupt:
@@ -173,7 +179,12 @@ if __name__ == "__main__":
             observer.join()
     else:
         try:
-            asyncio.run(main())
+            thread1 = threading.Thread(target=asyncio.run(main()))
+            thread2 = threading.Thread(target=asyncio.run(main()))
+            thread1.start()
+            thread2.start()
+            thread1.join()
+            thread2.join()
             while True:
                 time.sleep(1)
         except KeyboardInterrupt:

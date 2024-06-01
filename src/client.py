@@ -24,7 +24,6 @@ HOST = config.get("host", "localhost")
 PORT = config.get("port", 8080)
 PROMPT = config.get("prompt", False)
 QUERY = config.get("query", "hi")
-
 USE_SSL = config.get("use_ssl", False)
 CERTFILE = os.path.join(parent_dir, config.get("certificate_file"))
 KEYFILE = os.path.join(parent_dir, config.get("key_file"))
