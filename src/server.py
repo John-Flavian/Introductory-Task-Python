@@ -5,7 +5,6 @@ import ssl
 import os
 from datetime import datetime
 import threading
-# import signal
 
 # Watchdog imports
 import sys
@@ -24,26 +23,26 @@ config_dir_path = os.path.join(parent_dir, 'config/config.json')
 
 
 # Load configuration function
-def load_config(config_path):
+def load_config(config_path: str) -> dict[str, str]:
     """ Load the configuration. """
     with open(config_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    return data
+    return data or {}
 
 
 # Define variables
 config = load_config(config_dir_path)
 USE_SSL = config.get("use_ssl", False)
-CERTFILE = os.path.join(parent_dir, config.get("certificate_file"))
-KEYFILE = os.path.join(parent_dir, config.get("key_file"))
+CERTFILE = os.path.join(parent_dir, config.get("certificate_file") or '')
+KEYFILE = os.path.join(parent_dir, config.get("key_file") or '')
 DEV_MODE = config.get("development", False)
 BUFFER_SIZE = 1024
 
-linuxpath = os.path.join(parent_dir, config.get("txt_file"))
+linuxpath = os.path.join(parent_dir, config.get("txt_file") or '')
 REREAD_ON_QUERY = config.get("reread_on_query", False)
 
 
-def load_txt_file(file_path):
+def load_txt_file(file_path: str) -> list[str]:
     """ Load the contents of the text file. """
     try:
         contents = []
@@ -55,14 +54,14 @@ def load_txt_file(file_path):
         print(f"File not found: {file_path}")
     except IOError as e:
         print(f"IOError occurred: {e}")
-    return None
+    return []
 
 
 # Load the contents of the text file
 INITIAL_FILE_CONTENTS = load_txt_file(linuxpath)
 
 
-def search(contents, query):
+def search(contents: list[str], query: str) -> str:
     """ Search for the query in the specified text file and return. """
     try:
         for line in contents:
@@ -75,7 +74,9 @@ def search(contents, query):
     return 'STRING NOT FOUND'
 
 
-async def handle_client(reader, writer):
+async def handle_client(
+                        reader: asyncio.StreamReader,
+                        writer: asyncio.StreamWriter) -> None:
     """Function handling an asynchronous client connection."""
     start_time = time.time()
     client_ip = writer.get_extra_info('peername')[0]
@@ -108,10 +109,7 @@ async def handle_client(reader, writer):
             )
             print(log_message)
     except asyncio.IncompleteReadError as e:
-        raise asyncio.IncompleteReadError(
-            f"Error: Incomplete read error: {e}",
-            e.partial
-        ) from e
+        raise asyncio.IncompleteReadError(e.partial, e.expected) from e
     except ConnectionResetError as e:
         raise ConnectionResetError(
             f"Error: Connection reset by the server: {e}"
@@ -122,7 +120,7 @@ async def handle_client(reader, writer):
         await writer.wait_closed()
 
 
-def create_ssl_context():
+def create_ssl_context() -> ssl.SSLContext:
     """ Function to create the SSL context. """
     cert_missing = not os.path.exists(CERTFILE) or not CERTFILE
     key_missing = not os.path.exists(KEYFILE) or not KEYFILE
@@ -133,7 +131,7 @@ def create_ssl_context():
     return context
 
 
-async def main():
+async def main() -> None:
     """ Function to start the server. """
     server = await asyncio.start_server(
         handle_client,

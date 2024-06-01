@@ -4,7 +4,7 @@
   "key_file": "certs/key.pem",
   "txt_file": "files/200k.txt",
   "reread_on_query": false,
-  "development": false,
+  "development": true,
   "host": "localhost",
   "port": 8080,
   "prompt": false,
