@@ -5,6 +5,7 @@ import ssl
 import os
 from datetime import datetime
 import threading
+# import signal
 
 # Watchdog imports
 import sys
@@ -143,12 +144,7 @@ async def main():
 
     address = server.sockets[0].getsockname()
     print(f'Serving on {address}')
-
-    try:
-        async with server:
-            await server.serve_forever()
-    except asyncio.CancelledError:
-        print("Server is shutting down!")
+    await server.serve_forever()
 
 
 if __name__ == "__main__":
