@@ -29,7 +29,7 @@ CERTFILE = os.path.join(parent_dir, config.get("certificate_file"))
 KEYFILE = os.path.join(parent_dir, config.get("key_file"))
 
 
-async def send_message(message):
+async def send_message(message: str) -> None:
     """ Function to send a message to the server. """
     try:
         if USE_SSL:
@@ -71,7 +71,7 @@ async def send_message(message):
             await writer.wait_closed()
 
 
-async def main():
+async def main() -> None:
     """ Function to start the client. """
     if config.get("prompt", False):
         search_text = input("Please enter the search text: ")
