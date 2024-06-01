@@ -15,15 +15,10 @@ from watchdog.events import LoggingEventHandler
 
 # Get the directory of the current script
 src_dir = os.path.dirname(os.path.abspath(__file__))
-
 # Go one level above
 parent_dir = os.path.dirname(src_dir)
-
 # Construct the full path to the config file
 config_dir_path = os.path.join(parent_dir, 'config/config.json')
-
-# Construct the full path to the config file
-txt_dir_path = os.path.join(parent_dir, 'files/200k.txt')
 
 
 # Load configuration
@@ -70,11 +65,11 @@ def search(contents, query):
     try:
         for line in contents:
             if query == line.strip():
-                return 'STRING FOUND'
-    except FileNotFoundError:
-        print(f"File not found: {contents}")
+                return 'STRING EXISTS'
+    except FileNotFoundError as e:
+        raise FileNotFoundError(f"File not found: {linuxpath}") from e
     except IOError as e:
-        print(f"IOError occurred: {e}")
+        raise IOError(f"IOError occurred: {e}") from e
     return 'STRING NOT FOUND'
 
 
@@ -127,8 +122,8 @@ async def handle_client(reader, writer):
 
 def create_ssl_context():
     """ Function to create the SSL context. """
-    cert_missing = not CERTFILE or not os.path.exists(CERTFILE)
-    key_missing = not KEYFILE or not os.path.exists(KEYFILE)
+    cert_missing = not os.path.exists(CERTFILE) or not CERTFILE
+    key_missing = not os.path.exists(KEYFILE) or not KEYFILE
     if cert_missing or key_missing:
         raise FileNotFoundError("SSL certificate or key file not found")
     context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
