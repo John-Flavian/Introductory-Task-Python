@@ -160,12 +160,7 @@ if __name__ == "__main__":
         observer.schedule(event_handler, path, recursive=True)
         observer.start()
         try:
-            thread1 = threading.Thread(target=asyncio.run(main()))
-            thread2 = threading.Thread(target=asyncio.run(main()))
-            thread1.start()
-            thread2.start()
-            thread1.join()
-            thread2.join()
+            asyncio.run(main())
             while True:
                 time.sleep(1)
         except KeyboardInterrupt:
@@ -174,13 +169,28 @@ if __name__ == "__main__":
             observer.stop()
             observer.join()
     else:
+        # Run multiple threads in production
         try:
-            thread1 = threading.Thread(target=asyncio.run(main()))
-            thread2 = threading.Thread(target=asyncio.run(main()))
-            thread1.start()
-            thread2.start()
-            thread1.join()
-            thread2.join()
+            # Run one thread per CPU core
+            MAX_WORKERS = os.cpu_count()
+            if MAX_WORKERS is None:
+                # Fallback in case os.cpu_count() returns None
+                MAX_WORKERS = 2
+
+            threads = []
+
+            print(f"Number of CPU cores / threads: {MAX_WORKERS}")
+
+            # Create and start threads
+            for _ in range(MAX_WORKERS):
+                thread = threading.Thread(target=asyncio.run(main()))
+                threads.append(thread)
+                thread.start()
+
+            # Join threads
+            for thread in threads:
+                thread.join()
+
             while True:
                 time.sleep(1)
         except KeyboardInterrupt:
