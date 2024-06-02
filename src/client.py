@@ -7,19 +7,16 @@ import os
 
 # Get the directory of the current script
 src_dir = os.path.dirname(os.path.abspath(__file__))
-
 # Go one level above
 parent_dir = os.path.dirname(src_dir)
-
 # Construct the full path to the config file
 config_path = os.path.join(parent_dir, 'config/config.json')
-
 
 # Load configuration
 with open(config_path, 'r', encoding='utf-8') as f:
     config = json.load(f)
 
-
+# Define variables
 HOST = config.get("host", "localhost")
 PORT = config.get("port", 8080)
 PROMPT = config.get("prompt", False)

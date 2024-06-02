@@ -5,6 +5,7 @@ import ssl
 import os
 from datetime import datetime
 import threading
+# import operator as op
 
 # Watchdog imports
 import sys
@@ -33,12 +34,12 @@ def load_config(config_path: str) -> dict[str, str]:
 # Define variables
 config = load_config(config_dir_path)
 USE_SSL = config.get("use_ssl", False)
-CERTFILE = os.path.join(parent_dir, config.get("certificate_file") or '')
-KEYFILE = os.path.join(parent_dir, config.get("key_file") or '')
+CERTFILE = os.path.join(parent_dir, config.get("certificate_file", ''))
+KEYFILE = os.path.join(parent_dir, config.get("key_file", ''))
 DEV_MODE = config.get("development", False)
 BUFFER_SIZE = 1024
 
-linuxpath = os.path.join(parent_dir, config.get("txt_file") or '')
+linuxpath = os.path.join(parent_dir, config.get("txt_file", ''))
 REREAD_ON_QUERY = config.get("reread_on_query", False)
 
 
@@ -62,15 +63,10 @@ INITIAL_FILE_CONTENTS = load_txt_file(linuxpath)
 
 
 def search(contents: list[str], query: str) -> str:
-    """ Search for the query in the specified text file and return. """
-    try:
-        for line in contents:
-            if query == line.strip():
-                return 'STRING EXISTS'
-    except FileNotFoundError as e:
-        raise FileNotFoundError(f"File not found: {linuxpath}") from e
-    except IOError as e:
-        raise IOError(f"IOError occurred: {e}") from e
+    # Generate docstrings
+    """ Search for the query in the specified text contents and return. """
+    if query in contents:
+        return 'STRING FOUND'
     return 'STRING NOT FOUND'
 
 
