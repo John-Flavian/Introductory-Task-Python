@@ -7,13 +7,7 @@ from datetime import datetime
 import threading
 # import operator as op
 
-# Watchdog imports
-import sys
 import time
-import logging
-from watchdog.observers import Observer
-from watchdog.events import LoggingEventHandler
-
 
 # Get the directory of the current script
 src_dir = os.path.dirname(os.path.abspath(__file__))
@@ -143,51 +137,31 @@ async def main() -> None:
 
 if __name__ == "__main__":
     # Function to start the server
-    if DEV_MODE:
-        logging.basicConfig(level=logging.INFO,
-                            format='%(asctime)s - %(message)s',
-                            datefmt='%Y-%m-%d %H:%M:%S')
-        path = sys.argv[1] if len(sys.argv) > 1 else '.'
-        logging.info('start watching directory %s', path)
-        event_handler = LoggingEventHandler()
-        observer = Observer()
-        observer.schedule(event_handler, path, recursive=True)
-        observer.start()
-        try:
-            asyncio.run(main())
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            print("Server stopped manually.")
-        finally:
-            observer.stop()
-            observer.join()
-    else:
-        # Run multiple threads in production
-        try:
-            # Run one thread per CPU core
-            MAX_WORKERS = os.cpu_count()
-            if MAX_WORKERS is None:
-                # Fallback in case os.cpu_count() returns None
-                MAX_WORKERS = 2
+    # Run multiple threads in production
+    try:
+        # Run one thread per CPU core
+        MAX_WORKERS = os.cpu_count()
+        if MAX_WORKERS is None:
+            # Fallback in case os.cpu_count() returns None
+            MAX_WORKERS = 2
 
-            threads = []
+        threads = []
 
-            print(f"Number of CPU cores / threads: {MAX_WORKERS}")
+        print(f"Number of CPU cores / threads: {MAX_WORKERS}")
 
-            # Create and start threads
-            for _ in range(MAX_WORKERS):
-                thread = threading.Thread(target=asyncio.run(main()))
-                threads.append(thread)
-                thread.start()
+        # Create and start threads
+        for _ in range(MAX_WORKERS):
+            thread = threading.Thread(target=asyncio.run(main()))
+            threads.append(thread)
+            thread.start()
 
-            # Join threads
-            for thread in threads:
-                thread.join()
+        # Join threads
+        for thread in threads:
+            thread.join()
 
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            print("Server stopped manually.")
-        finally:
-            print("Server stopped.")
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("Server stopped manually.")
+    finally:
+        print("Server stopped.")
