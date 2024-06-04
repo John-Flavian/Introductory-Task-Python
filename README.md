@@ -2,47 +2,72 @@
 
 ## Project Setup
 
-### Create a virtual environment
+This guide will walk you through setting up the Algo-Science-Assessment project.
+Follow the steps below to create a virtual environment, install dependencies, start the server, run the client, perform unit tests, and conduct load tests.
+
+### Step 1: Create a Virtual Environment
+First, create a virtual environment to isolate your project dependencies.
+
+```bash
 python3 -m venv venv
+```
 
-### Activate the virtual environment
-On Windows:
+### Step 2: Activate the Virtual Environment
+Activate the virtual environment. The steps differ based on your operating system:
 
-bash
+**On Windows:**
+```bash
 .\venv\Scripts\activate
+```
 
-On macOS and Linux:
-bash
-
+**On macOS and Linux:**
+```bash
 source venv/bin/activate
+```
 
-## Install dependencies
+### Step 3: Install Dependencies
+With the virtual environment activated, install the required dependencies:
+
+```bash
 pip install -r requirements.txt
+```
 
+### Step 4: Start the Server
+Start the server using the following command:
 
-## Start the server
+```bash
 python3 src/server.py
+```
 
-## Run the client
+### Step 5: Run the Client
+In another terminal instance (with the virtual environment activated), run the client:
+
+```bash
 python3 src/client.py
+```
 
+### Step 6: Run Unit Tests for the Server
+To run the unit tests for the server script and view the logs, execute:
 
-## Testing
-
-### Run the unit tests for the server script and view the logs
+```bash
 PYTHONPATH=. pytest tests/server_unit_test.py -s
+```
 
-### Run the unit tests for the server script and without logs
-PYTHONPATH=. pytest tests/server_unit_test.py
+### Step 7: Run Load Tests for the Server
+To conduct load tests, follow these steps:
 
+1. **Start the Server:** Ensure the server is running.
+   ```bash
+   python3 src/server.py
+   ```
 
-### Run load tests for the server
-Start the server:
-python3 src/server.py
+2. **Open Another Terminal Instance:** With the virtual environment activated, run:
+   ```bash
+   locust -f tests/locust_load_test.py
+   ```
 
-Open another instance of the terminal and run:
-locust -f tests/locust_load_test.py 
-Then visit: http://localhost:8089
+3. **Open Locust Web Interface:** Visit [http://localhost:8089](http://localhost:8089) in your browser.
 
-Enter the number of Users and ramp up per second
-then click start.
+4. **Configure Load Test:** Enter the desired number of users and ramp-up rate per second, then click "Start".
+
+By following these steps, you will set up the project environment, install dependencies, run the server and client, execute unit tests, and perform load testing efficiently.

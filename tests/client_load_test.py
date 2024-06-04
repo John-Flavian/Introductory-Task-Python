@@ -1,4 +1,4 @@
-""" Module providing a function to send a message to the server. """
+""" Cloned client module for load testing. """
 import asyncio
 import ssl
 import json
@@ -27,7 +27,43 @@ KEYFILE = os.path.join(parent_dir, config.get("key_file"))
 
 
 async def send_message(message: str) -> None:
-    """ Function to send a message to the server. """
+    """
+        Function to send a message to the server.
+
+    Args:
+        message (str): The message to send to the server.
+
+    Raises:
+        ssl.SSLError: If an SSL error occurs.
+        socket.gaierror: If a socket error occurs.
+        ConnectionRefusedError: If the connection is refused by the server.
+        ConnectionResetError: If the connection is reset by the server.
+        asyncio.TimeoutError: If the connection times out.
+
+    Returns:
+        None
+
+    This function establishes a connection to the server
+        using either SSL or no SSL,
+        depending on the value of the `USE_SSL` variable.
+        It then sends the message to the
+        server, waits for the message to be drained,
+        reads a response from the server,
+        prints the response, and closes the connection.
+        If any errors occur during the
+        process, they are caught and printed.
+
+    Note: The `HOST` and `PORT` variables are used to determine
+        the server's address
+        and port number.
+        The `USE_SSL` variable determines whether SSL is used for the
+        connection.
+        If SSL is used, the `CERTFILE` and `KEYFILE` variables are used to
+        load the SSL certificate and key.
+
+    Example usage:
+        await send_message("Hello, server!")
+    """
     try:
         if USE_SSL:
             context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
@@ -67,7 +103,25 @@ async def send_message(message: str) -> None:
 
 
 async def main() -> None:
-    """ Function to start the client. """
+    """
+     Function to start the client.
+
+    This function prompts the user for search text
+        if the `prompt` configuration option is set to `True`,
+        otherwise it uses the `query` configuration option as
+        the search text.
+        It then calls the `send_message` function
+        to send the search text to the server.
+
+    Raises:
+        None
+
+    Returns:
+        None
+
+    Example usage:
+        await main()
+    """
     if config.get("prompt", False):
         search_text = input("Please enter the search text: ")
     else:
