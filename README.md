@@ -15,3 +15,5 @@ On macOS and Linux:
 bash
 
 source venv/bin/activate
+
+## Install dependencies

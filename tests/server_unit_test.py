@@ -79,7 +79,7 @@ async def test_handle_client_no_reread() -> None:
 
 
 @pytest.mark.asyncio
-async def test_handle_client_incomplete_read_error():
+async def test_handle_client_incomplete_read_error() -> None:
     """ Test for the `handle_client` function. """
     reader = AsyncMock()
     writer = AsyncMock()
@@ -93,102 +93,17 @@ async def test_handle_client_incomplete_read_error():
 
 
 @pytest.mark.asyncio
-async def test_handle_client_connection_reset_error():
+async def test_handle_client_connection_reset_error() -> None:
     """ Test for the `handle_client` function. """
     reader = AsyncMock()
     writer = AsyncMock()
-    reader.read = AsyncMock(side_effect=ConnectionResetError("Connection reset"))
+    reader.read = AsyncMock(
+        side_effect=ConnectionResetError("Connection reset")
+        )
     writer.get_extra_info = MagicMock(return_value=('127.0.0.1', 12345))
 
     with pytest.raises(ConnectionResetError):
         await server.handle_client(reader, writer)
-
-
-# @pytest.mark.asyncio
-# async def test_handle_client_load_txt_file_exceptions():
-#     """ Test for the `handle_client` function. """
-#     reader = AsyncMock()
-#     writer = AsyncMock()
-
-#     reader.read = AsyncMock(side_effect=[
-#         b'query1\n',
-#         b''  # Simulate end of data stream
-#     ])
-#     writer.get_extra_info = MagicMock(return_value=('127.0.0.1', 12345))
-
-#     with patch('src.server.load_txt_file', side_effect=FileNotFoundError):
-#         await server.handle_client(reader, writer)
-#         writer.write.assert_called_with(b'STRING NOT FOUND\n')
-#         await writer.drain.assert_called()
-
-#     with patch('src.server.load_txt_file', side_effect=PermissionError):
-#         await server.handle_client(reader, writer)
-#         writer.write.assert_called_with(b'STRING NOT FOUND\n')
-#         await writer.drain.assert_called()
-
-#     with patch('src.server.load_txt_file', side_effect=IsADirectoryError):
-#         await server.handle_client(reader, writer)
-#         writer.write.assert_called_with(b'STRING NOT FOUND\n')
-#         await writer.drain.assert_called()
-
-#     with patch('src.server.load_txt_file', side_effect=IOError("Some I/O error")):
-#         await server.handle_client(reader, writer)
-#         writer.write.assert_called_with(b'STRING NOT FOUND\n')
-#         await writer.drain.assert_called()
-
-
-# async def test_handle_client_incomplete_read() -> None:
-#     """ Test for the `handle_client` function. """
-#     reader = AsyncMock()
-#     writer = MagicMock()
-#     reader.read = AsyncMock(side_effect=[b"apple\n", b""])
-#     writer.get_extra_info = MagicMock(return_value=('127.0.0.1',))
-#     writer.drain = AsyncMock()
-#     writer.wait_closed = AsyncMock()
-
-#     with freeze_time("2023-01-01 12:00:00"):
-#         with patch('src.server.time.time', side_effect=[1000.0, 1000.1]):
-#             with patch('src.server.load_txt_file',
-#                        return_value=["te", "st", "op"]):
-#                 server.REREAD_ON_QUERY = True
-#                 with pytest.raises(IncompleteReadError):
-#                     await server.handle_client(reader, writer)
-
-#                 writer.write.assert_called_with(b'STRING NOT FOUND\n')
-#                 assert writer.write.call_count == 1
-
-#                 writer.drain.assert_called()
-#                 assert writer.drain.call_count == 1
-
-#                 writer.close.assert_called()
-#                 writer.wait_closed.assert_called()
-
-
-# async def test_handle_client_connection_reset() -> None:
-#     """ Test for the `handle_client` function. """
-#     reader = AsyncMock()
-#     writer = MagicMock()
-#     reader.read = AsyncMock(side_effect=[b"apple\n", b""])
-#     writer.get_extra_info = MagicMock(return_value=('127.0.0.1',))
-#     writer.drain = AsyncMock()
-#     writer.wait_closed = AsyncMock()
-
-#     with freeze_time("2023-01-01 12:00:00"):
-#         with patch('src.server.time.time', side_effect=[1000.0, 1000.1]):
-#             with patch('src.server.load_txt_file',
-#                        return_value=["te", "st", "op"]):
-#                 server.REREAD_ON_QUERY = True
-#                 with pytest.raises(ConnectionResetError):
-#                     await server.handle_client(reader, writer)
-
-#                 writer.write.assert_called_with(b'STRING NOT FOUND\n')
-#                 assert writer.write.call_count == 1
-
-#                 writer.drain.assert_called()
-#                 assert writer.drain.call_count == 1
-
-#                 writer.close.assert_called()
-#                 writer.wait_closed.assert_called()
 
 
 @pytest.mark.asyncio
