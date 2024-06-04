@@ -7,10 +7,10 @@ from main_load_test import main
 
 class LoadTestUser(User):
     """ Locust user class. """
-    wait_time = between(1, 2)
+    wait_time = between(1, 5)
 
     @task
-    def run_client(self):
+    def run_client(self) -> None:
         """ Function to send a message to the server. """
         start_time = time.time()
         try:
@@ -39,13 +39,13 @@ class LoadTestUser(User):
 
 # Setup and teardown events
 @events.test_start.add_listener
-def on_test_start(environment, **kwargs):
+def on_test_start(environment, **kwargs) -> None:
     """ Function to start the load test. """
     print("Starting load test...")
 
 
 @events.test_stop.add_listener
-def on_test_stop(environment, **kwargs):
+def on_test_stop(environment, **kwargs) -> None:
     """ Function to stop the load test. """
     print("Load test finished.")
 
@@ -53,7 +53,7 @@ def on_test_stop(environment, **kwargs):
 @events.request.add_listener
 def my_request_handler(request_type, name, response_time,
                        response_length, response,
-                       context, exception, start_time, url, **kwargs):
+                       context, exception, start_time, url, **kwargs) -> None:
     """ Function to handle the request. """
     if exception:
         print(f"Request to {name} failed with exception {exception}")

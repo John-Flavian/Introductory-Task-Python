@@ -2,6 +2,7 @@
 from unittest.mock import patch, AsyncMock, MagicMock
 from pathlib import Path
 import json
+import ssl
 import asyncio
 import pytest
 from freezegun import freeze_time
@@ -192,7 +193,7 @@ def test_create_ssl_context_success() -> None:
             default_context.return_value = context_mock
 
             context = server.create_ssl_context()
-            auth = server.ssl.Purpose.CLIENT_AUTH
+            auth = ssl.Purpose.CLIENT_AUTH
             default_context.assert_called_once_with(auth)
             context_mock.load_cert_chain.assert_called_once_with(
                 certfile=server.CERTFILE, keyfile=server.KEYFILE
@@ -235,13 +236,13 @@ def temp_text_file(tmp_path: Path) -> Path:
     return file_path
 
 
-def test_load_txt_file_exists(temp_text_file) -> None:
+def test_load_txt_file_exists(temp_text_file: str) -> None:
     """Test loading an existing text file."""
     contents = server.load_txt_file(temp_text_file)
     assert contents == ["Line 1", "Line 2", "Line 3"]
 
 
-def test_load_txt_file_file_not_found():
+def test_load_txt_file_file_not_found() -> None:
     """ Test loading a text file that does not exist. """
     msg = "Error: The file 'dummy_path' was not found."
     with patch("builtins.open", side_effect=FileNotFoundError):
@@ -249,7 +250,7 @@ def test_load_txt_file_file_not_found():
             server.load_txt_file("dummy_path")
 
 
-def test_load_txt_file_permission_error():
+def test_load_txt_file_permission_error() -> None:
     """ Test loading a text file with a permission error. """
     with patch("builtins.open", side_effect=PermissionError):
         msg = "Error: Permission denied for file 'dummy_path'."
@@ -257,7 +258,7 @@ def test_load_txt_file_permission_error():
             server.load_txt_file("dummy_path")
 
 
-def test_load_txt_file_is_a_directory_error():
+def test_load_txt_file_is_a_directory_error() -> None:
     """ Test loading a text file that is a directory. """
     with patch("builtins.open", side_effect=IsADirectoryError):
         msg = "Error: The path 'dummy_path' is a directory, not a file."
@@ -265,7 +266,7 @@ def test_load_txt_file_is_a_directory_error():
             server.load_txt_file("dummy_path")
 
 
-def test_load_txt_file_io_error():
+def test_load_txt_file_io_error() -> None:
     """ Test loading a text file with an I/O error. """
     with patch("builtins.open", side_effect=IOError("Some I/O error")):
         msg = "Error: An I/O error occurred: Some I/O error"
@@ -283,13 +284,13 @@ def temp_config_file(tmp_path: Path) -> Path:
 
 
 # Test cases
-def test_load_config_exists(temp_config_file) -> None:
+def test_load_config_exists(temp_config_file: str) -> None:
     """Test loading an existing config file."""
     config = server.load_config(temp_config_file)
     assert config == {"key": "value"}
 
 
-def test_load_config_file_file_not_found():
+def test_load_config_file_file_not_found() -> None:
     """ Test loading a config file that does not exist. """
     msg = "Error: The file 'dummy_path' does not exist."
     with patch("builtins.open", side_effect=FileNotFoundError):
@@ -297,7 +298,7 @@ def test_load_config_file_file_not_found():
             server.load_config("dummy_path")
 
 
-def test_load_config_file_permission_error():
+def test_load_config_file_permission_error() -> None:
     """ Test loading a confic file with a permission error. """
     with patch("builtins.open", side_effect=PermissionError):
         msg = "Error: Permission denied for file 'dummy_path'."
@@ -305,7 +306,7 @@ def test_load_config_file_permission_error():
             server.load_config("dummy_path")
 
 
-def test_load_config_file_is_a_directory_error():
+def test_load_config_file_is_a_directory_error() -> None:
     """ Test loading a config file that is a directory. """
     with patch("builtins.open", side_effect=IsADirectoryError):
         msg = "Error: The path 'dummy_path' is a directory, not a file."
@@ -313,7 +314,7 @@ def test_load_config_file_is_a_directory_error():
             server.load_config("dummy_path")
 
 
-def test_load_config_file_json_decode_error():
+def test_load_config_file_json_decode_error() -> None:
     """ Test loading a config file with an invalid JSON. """
     msg = "Error: The file 'dummy_path' contains invalid JSON."
     with patch("builtins.open",
