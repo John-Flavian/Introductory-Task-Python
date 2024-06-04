@@ -2,3 +2,4 @@ python -m pip install -U watchdog
 pip install mypy
 pip install pytest pytest-asyncio
 pip install freezegun
+pip install locust

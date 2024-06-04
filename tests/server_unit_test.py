@@ -9,11 +9,11 @@ from src import server
 
 # Test for the `search` function
 @pytest.mark.parametrize("contents, query, expected", [
-    (["apple", "banana", "cherry"], "banana", "STRING FOUND"),
+    (["apple", "banana", "cherry"], "banana", "STRING EXISTS"),
     (["apple", "banana", "cherry"], "grape", "STRING NOT FOUND"),
     ([], "apple", "STRING NOT FOUND"),
     (["apple", "banana", "cherry"], "", "STRING NOT FOUND"),
-    (["apple", "apple", "apple"], "apple", "STRING FOUND"),
+    (["apple", "apple", "apple"], "apple", "STRING EXISTS"),
 ])
 def test_search(contents: list[str], query: str, expected: str) -> None:
     """ Test for the `search` function. """
@@ -206,17 +206,42 @@ def temp_text_file(tmp_path: Path) -> Path:
     return file_path
 
 
-def test_load_txt_file_exists(temp_text_file: str) -> None:
+def test_load_txt_file_exists(temp_text_file) -> None:
     """Test loading an existing text file."""
     contents = server.load_txt_file(temp_text_file)
     assert contents == ["Line 1", "Line 2", "Line 3"]
 
 
-def test_load_txt_empty_if_file_not_found(tmp_path: Path) -> None:
-    """Test loading a non-existent text file."""
-    file_path = tmp_path / "non_existent.txt"
-    test = server.load_txt_file(file_path)
-    assert not test
+def test_load_txt_file_file_not_found():
+    """ Test loading a text file that does not exist. """
+    msg = "Error: The file 'dummy_path' was not found."
+    with patch("builtins.open", side_effect=FileNotFoundError):
+        with pytest.raises(FileNotFoundError, match=msg):
+            server.load_txt_file("dummy_path")
+
+
+def test_load_txt_file_permission_error():
+    """ Test loading a text file with a permission error. """
+    with patch("builtins.open", side_effect=PermissionError):
+        msg = "Error: Permission denied for file 'dummy_path'."
+        with pytest.raises(PermissionError, match=msg):
+            server.load_txt_file("dummy_path")
+
+
+def test_load_txt_file_is_a_directory_error():
+    """ Test loading a text file that is a directory. """
+    with patch("builtins.open", side_effect=IsADirectoryError):
+        msg = "Error: The path 'dummy_path' is a directory, not a file."
+        with pytest.raises(IsADirectoryError, match=msg):
+            server.load_txt_file("dummy_path")
+
+
+def test_load_txt_file_io_error():
+    """ Test loading a text file with an I/O error. """
+    with patch("builtins.open", side_effect=IOError("Some I/O error")):
+        msg = "Error: An I/O error occurred: Some I/O error"
+        with pytest.raises(IOError, match=msg):
+            server.load_txt_file("dummy_path")
 
 
 @pytest.fixture
@@ -229,7 +254,40 @@ def temp_config_file(tmp_path: Path) -> Path:
 
 
 # Test cases
-def test_load_config_exists(temp_config_file: str) -> None:
+def test_load_config_exists(temp_config_file) -> None:
     """Test loading an existing config file."""
     config = server.load_config(temp_config_file)
     assert config == {"key": "value"}
+
+
+def test_load_config_file_file_not_found():
+    """ Test loading a config file that does not exist. """
+    msg = "Error: The file 'dummy_path' does not exist."
+    with patch("builtins.open", side_effect=FileNotFoundError):
+        with pytest.raises(FileNotFoundError, match=msg):
+            server.load_config("dummy_path")
+
+
+def test_load_config_file_permission_error():
+    """ Test loading a confic file with a permission error. """
+    with patch("builtins.open", side_effect=PermissionError):
+        msg = "Error: Permission denied for file 'dummy_path'."
+        with pytest.raises(PermissionError, match=msg):
+            server.load_config("dummy_path")
+
+
+def test_load_config_file_is_a_directory_error():
+    """ Test loading a config file that is a directory. """
+    with patch("builtins.open", side_effect=IsADirectoryError):
+        msg = "Error: The path 'dummy_path' is a directory, not a file."
+        with pytest.raises(IsADirectoryError, match=msg):
+            server.load_config("dummy_path")
+
+
+def test_load_config_file_json_decode_error():
+    """ Test loading a config file with an invalid JSON. """
+    msg = "Error: The file 'dummy_path' contains invalid JSON."
+    with patch("builtins.open",
+               side_effect=json.JSONDecodeError(msg, doc="dummy_path", pos=0)):
+        with pytest.raises(json.JSONDecodeError, match=msg):
+            server.load_config("dummy_path")

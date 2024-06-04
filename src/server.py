@@ -5,7 +5,6 @@ import ssl
 import os
 from datetime import datetime
 import threading
-# import operator as op
 
 import time
 
@@ -19,10 +18,53 @@ config_dir_path = os.path.join(parent_dir, 'config/config.json')
 
 # Load configuration function
 def load_config(config_path: str) -> dict[str, str]:
-    """ Load the configuration. """
-    with open(config_path, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    return data or {}
+    """
+        Load the configuration from a JSON file.
+
+    This function reads a JSON file from the specified path
+        and loads its content into a dictionary.
+    If the file cannot be found, read, or parsed, appropriate
+        error messages are raised and {} is returned.
+
+    Args:
+        config_path (str): The path to the configuration file.
+
+    Returns:
+        Optional[Dict[str, str]]:
+            A dictionary containing the configuration data,
+            or {} if an error occurs.
+
+    Raises:
+        FileNotFoundError: If the specified file does not exist.
+        PermissionError: If the file cannot be accessed due to
+            insufficient permissions.
+        IsADirectoryError: If the specified path is a directory, not a file.
+        json.JSONDecodeError: If the file contains invalid JSON.
+    """
+    try:
+        with open(config_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        return data or {}
+    except FileNotFoundError as e:
+        exception = FileNotFoundError(
+            f"Error: The file '{config_path}' does not exist."
+            )
+        raise exception from e
+    except PermissionError as e:
+        raise PermissionError(
+            f"Error: Permission denied for file '{config_path}'."
+        ) from e
+    except IsADirectoryError as e:
+        raise IsADirectoryError(
+            f"Error: The path '{config_path}' is a directory, not a file."
+        ) from e
+    except json.JSONDecodeError as e:
+        raise json.JSONDecodeError(
+            f"Error: The file '{config_path}' contains invalid JSON.",
+            doc=config_path,
+            pos=0
+        ) from e
+    return {}
 
 
 # Define variables
@@ -44,11 +86,23 @@ def load_txt_file(file_path: str) -> list[str]:
         with open(file_path, 'r', encoding='utf-8') as file:
             for line in file:
                 contents.append(line.strip())
-            return contents
-    except FileNotFoundError:
-        print(f"File not found: {file_path}")
+        return contents
+    except FileNotFoundError as e:
+        raise FileNotFoundError(
+            f"Error: The file '{file_path}' was not found."
+        ) from e
+    except PermissionError as e:
+        raise PermissionError(
+            f"Error: Permission denied for file '{file_path}'."
+        ) from e
+    except IsADirectoryError as e:
+        raise IsADirectoryError(
+            f"Error: The path '{file_path}' is a directory, not a file."
+        ) from e
     except IOError as e:
-        print(f"IOError occurred: {e}")
+        raise IOError(
+            f"Error: An I/O error occurred: {e}"
+            ) from e
     return []
 
 
@@ -60,7 +114,7 @@ def search(contents: list[str], query: str) -> str:
     # Generate docstrings
     """ Search for the query in the specified text contents and return. """
     if query in contents:
-        return 'STRING FOUND'
+        return 'STRING EXISTS'
     return 'STRING NOT FOUND'
 
 
@@ -140,7 +194,7 @@ if __name__ == "__main__":
     # Run multiple threads in production
     try:
         # Run one thread per CPU core
-        MAX_WORKERS = os.cpu_count()
+        MAX_WORKERS = os.cpu_count() * 2
         if MAX_WORKERS is None:
             # Fallback in case os.cpu_count() returns None
             MAX_WORKERS = 2

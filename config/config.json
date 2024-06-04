@@ -8,5 +8,5 @@
   "host": "localhost",
   "port": 8080,
   "prompt": false,
-  "query": "hi"
+  "query": "16;0;21;11;0;19;4;0;"
 }
