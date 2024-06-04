@@ -67,7 +67,6 @@ async def test_handle_client() -> None:
     Raises:
         AssertionError: If the actual output of the `handle_client` function
         does not match the expected output.
-    
     """
     reader = AsyncMock()
     writer = MagicMock()
@@ -415,7 +414,21 @@ def test_create_ssl_context_missing_both_files() -> None:
 
 @pytest.fixture
 def temp_text_file(tmp_path: Path) -> Path:
-    """Create a temporary text file."""
+    """
+    Create a temporary text file.
+
+    This function creates a temporary text file with the name "test.txt" in the
+        specified temporary directory.
+    The file is populated with the following lines:
+    "Line 1", "Line 2", and "Line 3".
+
+    Parameters:
+        tmp_path (Path): The temporary directory
+            where the file will be created.
+
+    Returns:
+        Path: The path to the created temporary text file.
+    """
     file_path = tmp_path / "test.txt"
     with open(file_path, "w", encoding="utf-8") as f:
         f.write("Line 1\nLine 2\nLine 3")
@@ -423,13 +436,36 @@ def temp_text_file(tmp_path: Path) -> Path:
 
 
 def test_load_txt_file_exists(temp_text_file: str) -> None:
-    """Test loading an existing text file."""
+    """
+    Test loading an existing text file.
+
+    This function tests the `load_txt_file` function by loading an
+        existing text file and asserting that the contents of the file
+        match the expected list of strings.
+
+    Parameters:
+        temp_text_file (str): The path to the temporary text file.
+
+    Raises:
+        AssertionError: If the contents of the text file do not match the
+            expected list of strings.
+    """
     contents = server.load_txt_file(temp_text_file)
     assert contents == ["Line 1", "Line 2", "Line 3"]
 
 
 def test_load_txt_file_file_not_found() -> None:
-    """ Test loading a text file that does not exist. """
+    """
+    Test loading a non-existent text file.
+
+    This function tests the `load_txt_file` function by attempting to load a
+    non-existent text file and asserting that a `FileNotFoundError` is raised
+    with the expected error message.
+
+    Raises:
+        AssertionError: If a `FileNotFoundError` is not raised or if the
+            error message does not match the expected message.
+    """
     msg = "Error: The file 'dummy_path' was not found."
     with patch("builtins.open", side_effect=FileNotFoundError):
         with pytest.raises(FileNotFoundError, match=msg):
@@ -437,7 +473,18 @@ def test_load_txt_file_file_not_found() -> None:
 
 
 def test_load_txt_file_permission_error() -> None:
-    """ Test loading a text file with a permission error. """
+    """
+    Test loading a text file with permission error.
+
+    This function tests the `load_txt_file` function by attempting
+    to load a text file
+    with a permission error and asserting that a `PermissionError` is raised
+    with the expected error message.
+
+    Raises:
+        AssertionError: If a `PermissionError` is not raised or if the
+            error message does not match the expected message.
+    """
     with patch("builtins.open", side_effect=PermissionError):
         msg = "Error: Permission denied for file 'dummy_path'."
         with pytest.raises(PermissionError, match=msg):
@@ -445,7 +492,18 @@ def test_load_txt_file_permission_error() -> None:
 
 
 def test_load_txt_file_is_a_directory_error() -> None:
-    """ Test loading a text file that is a directory. """
+    """
+    Test loading a text file that is a directory.
+
+    This function tests the `load_txt_file` function by attempting
+    to load a text file
+    that is a directory and asserting that a `IsADirectoryError` is raised
+    with the expected error message.
+
+    Raises:
+        AssertionError: If a `IsADirectoryError` is not raised or if the
+            error message does not match the expected message.
+    """
     with patch("builtins.open", side_effect=IsADirectoryError):
         msg = "Error: The path 'dummy_path' is a directory, not a file."
         with pytest.raises(IsADirectoryError, match=msg):
@@ -453,7 +511,18 @@ def test_load_txt_file_is_a_directory_error() -> None:
 
 
 def test_load_txt_file_io_error() -> None:
-    """ Test loading a text file with an I/O error. """
+    """
+    Test loading a text file with an I/O error.
+
+    This function tests the `load_txt_file` function by attempting
+    to load a text file
+    with an I/O error and asserting that an `IOError` is raised
+    with the expected error message.
+
+    Raises:
+        AssertionError: If an `IOError` is not raised or if the
+            error message does not match the expected message.
+    """
     with patch("builtins.open", side_effect=IOError("Some I/O error")):
         msg = "Error: An I/O error occurred: Some I/O error"
         with pytest.raises(IOError, match=msg):
@@ -462,7 +531,21 @@ def test_load_txt_file_io_error() -> None:
 
 @pytest.fixture
 def temp_config_file(tmp_path: Path) -> Path:
-    """Create a temporary json file."""
+    """
+    Test fixture to create a temporary config file.
+
+    This function creates a temporary JSON file with the name
+    "test-config.json" in the specified temporary directory.
+    The file is populated with the following JSON object:
+    {"key": "value"}.
+
+    Parameters:
+        tmp_path (Path): The temporary directory
+            where the file will be created.
+
+    Returns:
+        Path: The path to the created temporary config file.
+    """
     file_path = tmp_path / "test-config.json"
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump({"key": "value"}, f)
@@ -471,13 +554,36 @@ def temp_config_file(tmp_path: Path) -> Path:
 
 # Test cases
 def test_load_config_exists(temp_config_file: str) -> None:
-    """Test loading an existing config file."""
+    """
+    Test loading a config file that exists.
+
+    This function tests the `load_config` function by loading a
+        config file and asserting that the contents of the file
+        match the expected dictionary.
+
+    Parameters:
+        temp_config_file (str): The path to the temporary config file.
+
+    Raises:
+        AssertionError: If the contents of the config file do not match the
+            expected dictionary.
+    """
     config = server.load_config(temp_config_file)
     assert config == {"key": "value"}
 
 
 def test_load_config_file_file_not_found() -> None:
-    """ Test loading a config file that does not exist. """
+    """
+    Test loading a non-existent config file.
+
+    This function tests the `load_config` function by attempting to
+        load a non-existent config file and asserting that a
+        `FileNotFoundError` is raised with the expected error message.
+
+    Raises:
+        AssertionError: If a `FileNotFoundError` is not raised or if the
+            error message does not match the expected message.
+    """
     msg = "Error: The file 'dummy_path' does not exist."
     with patch("builtins.open", side_effect=FileNotFoundError):
         with pytest.raises(FileNotFoundError, match=msg):
@@ -485,7 +591,17 @@ def test_load_config_file_file_not_found() -> None:
 
 
 def test_load_config_file_permission_error() -> None:
-    """ Test loading a confic file with a permission error. """
+    """
+    Test loading a config file with a permission error.
+
+    This function tests the `load_config` function by attempting to
+        load a config file with a permission error and asserting that a
+        `PermissionError` is raised with the expected error message.
+
+    Raises:
+        AssertionError: If a `PermissionError` is not raised or if the
+            error message does not match the expected message.
+    """
     with patch("builtins.open", side_effect=PermissionError):
         msg = "Error: Permission denied for file 'dummy_path'."
         with pytest.raises(PermissionError, match=msg):
@@ -493,7 +609,17 @@ def test_load_config_file_permission_error() -> None:
 
 
 def test_load_config_file_is_a_directory_error() -> None:
-    """ Test loading a config file that is a directory. """
+    """
+    Test loading a config file that is a directory.
+
+    This function tests the `load_config` function by attempting to
+        load a config file that is a directory and asserting that a
+        `IsADirectoryError` is raised with the expected error message.
+
+    Raises:
+        AssertionError: If a `IsADirectoryError` is not raised or if the
+            error message does not match the expected message.
+    """
     with patch("builtins.open", side_effect=IsADirectoryError):
         msg = "Error: The path 'dummy_path' is a directory, not a file."
         with pytest.raises(IsADirectoryError, match=msg):
@@ -501,7 +627,17 @@ def test_load_config_file_is_a_directory_error() -> None:
 
 
 def test_load_config_file_json_decode_error() -> None:
-    """ Test loading a config file with an invalid JSON. """
+    """
+    Test loading a config file with a JSON decode error.
+
+    This function tests the `load_config` function by attempting to
+        load a config file with a JSON decode error and asserting that a
+        `json.JSONDecodeError` is raised with the expected error message.
+
+    Raises:
+        AssertionError: If a `json.JSONDecodeError` is not raised or if the
+            error message does not match the expected message.
+    """
     msg = "Error: The file 'dummy_path' contains invalid JSON."
     with patch("builtins.open",
                side_effect=json.JSONDecodeError(msg, doc="dummy_path", pos=0)):
