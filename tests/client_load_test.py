@@ -110,7 +110,7 @@ async def main() -> None:
         if the `prompt` configuration option is set to `True`,
         otherwise it uses the `query` configuration option as
         the search text.
-        It then calls the `send_message` function
+        Then it calls the `send_message` function
         to send the search text to the server.
 
     Raises:
