@@ -4,8 +4,10 @@
   "key_file": "certs/key.pem",
   "txt_file": "files/200k.txt",
   "reread_on_query": false,
-  "host": "localhost",
-  "port": 8080,
+  "server_host": "127.0.0.1",
+  "server_port": 8001,
+  "client_host": "localhost",
+  "client_port": 8001,
   "prompt": false,
   "query": "16;0;21;11;0;19;4;0;"
 }

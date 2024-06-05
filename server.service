@@ -1,0 +1,14 @@
+[Unit]
+Description=A script for running the server as a daemon
+After=syslog.target network.target
+
+[Service]
+WorkingDirectory=/server-app
+ExecStart=/server-app/venv/bin/python src/server.py
+
+Restart=always
+RestartSec=120
+
+[Install]
+WantedBy=multi-user.target
+

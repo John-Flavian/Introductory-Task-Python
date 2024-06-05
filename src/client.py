@@ -17,8 +17,8 @@ with open(config_path, 'r', encoding='utf-8') as f:
     config = json.load(f)
 
 # Define variables
-HOST = config.get("host", "localhost")
-PORT = config.get("port", 8080)
+HOST = config.get("client_host", "127.0.0.1")
+PORT = config.get("client_port", 7000)
 PROMPT = config.get("prompt", False)
 QUERY = config.get("query", "hi")
 USE_SSL = config.get("use_ssl", False)
@@ -77,6 +77,8 @@ async def send_message(message: str) -> None:
         reader, writer = await asyncio.open_connection(
             HOST,
             PORT,
+            # '135.181.96.160',
+            # 44445,
             ssl=context
             )
         print("Connected to the server.")

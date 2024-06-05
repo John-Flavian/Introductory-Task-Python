@@ -74,6 +74,8 @@ CERTFILE = os.path.join(parent_dir, config.get("certificate_file", ''))
 KEYFILE = os.path.join(parent_dir, config.get("key_file", ''))
 DEV_MODE = config.get("development", False)
 BUFFER_SIZE = 1024
+HOST = config.get("server_host", "127.0.0.1")
+PORT = config.get("server_port", 7000)
 
 linuxpath = os.path.join(parent_dir, config.get("txt_file", ''))
 REREAD_ON_QUERY = config.get("reread_on_query", False)
@@ -302,8 +304,8 @@ async def main() -> None:
     """
     server = await asyncio.start_server(
         handle_client,
-        'localhost',
-        8080,
+        HOST,
+        PORT,
         ssl=create_ssl_context() if USE_SSL else None
     )
 

@@ -76,3 +76,32 @@ PYTHONPATH=. pytest tests/server_unit_test.py -s
 4. **Configure and start the load test:** Enter the number of users and ramp-up rate per second, then click "Start".
 
 By following these steps, you will set up the project environment, install dependencies, run the server and client, execute unit tests, and perform load testing efficiently.
+
+
+Run it as a service
+To run it as a service you can use docker
+Ensure that you have the latest version of docker installed
+Then run: docker-compose up --build
+To build the image
+then the server will be running on http://127.0.0.1:7000 and you can interact with it.
+
+sudo -s
+cd /etc/systemd/system
+
+nano server.service
+[Unit]
+Description=A script for running the server as a daemon
+After=syslog.target network.target
+
+[Service]
+WorkingDirectory=/server-app
+ExecStart=/server-app/venv/bin/python src/server.py
+
+Restart=always
+RestartSec=120
+
+[Install]
+WantedBy=multi-user.target
+
+
+ systemctl daemon-reload
