@@ -17,8 +17,8 @@ with open(config_path, 'r', encoding='utf-8') as f:
     config = json.load(f)
 
 # Define variables
-HOST = config.get("host", "localhost")
-PORT = config.get("port", 8080)
+HOST = config.get("client_host", "localhost")
+PORT = config.get("client_port", 8001)
 PROMPT = config.get("prompt", False)
 QUERY = config.get("query", "hi")
 USE_SSL = config.get("use_ssl", False)

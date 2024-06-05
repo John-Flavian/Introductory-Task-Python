@@ -75,7 +75,7 @@ KEYFILE = os.path.join(parent_dir, config.get("key_file", ''))
 DEV_MODE = config.get("development", False)
 BUFFER_SIZE = 1024
 HOST = config.get("server_host", "127.0.0.1")
-PORT = config.get("server_port", 7000)
+PORT = config.get("server_port", 8001)
 
 linuxpath = os.path.join(parent_dir, config.get("txt_file", ''))
 REREAD_ON_QUERY = config.get("reread_on_query", False)

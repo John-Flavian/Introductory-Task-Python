@@ -40,11 +40,13 @@ Update the configuration options in `config/config.json`:
 
 - `use_ssl`: Boolean, defaults to `false`. Activates SSL for both the server and the client.
 - `certificate_file`: Path to `certificate.pem` file.
-- `key_file`: Path to `key.pem` file.
+- `key_file`: Path to `key.pem` file. (The passphrase for the current key file is 'john')
 - `txt_file`: Path to the `.txt` file to be searched.
 - `reread_on_query`: Boolean, defaults to `false`.
-- `host`: Server host.
-- `port`: Server port.
+- `server_host`: Server host.
+- `server_port`: Server port.
+- `client_host`: Server host.
+- `client_port`: Server port.
 - `prompt`: Boolean, defaults to `false`. If `true`, prompts the user to type in a search string.
 - `query`: Query string for the client script, default is `"hi"`.
 
@@ -77,31 +79,56 @@ PYTHONPATH=. pytest tests/server_unit_test.py -s
 
 By following these steps, you will set up the project environment, install dependencies, run the server and client, execute unit tests, and perform load testing efficiently.
 
+## Running the Server as a Linux Daemon
 
-Run it as a service
-To run it as a service you can use docker
-Ensure that you have the latest version of docker installed
-Then run: docker-compose up --build
-To build the image
-then the server will be running on http://127.0.0.1:7000 and you can interact with it.
+To run the server as a Linux daemon or service, follow these steps:
 
-sudo -s
-cd /etc/systemd/system
+1. **Ensure you're logged in as the root user:**
+   ```bash
+   sudo -s
+   ```
 
-nano server.service
-[Unit]
-Description=A script for running the server as a daemon
-After=syslog.target network.target
+2. **Navigate to the systemd directory:**
+   ```bash
+   cd /etc/systemd/system
+   ```
 
-[Service]
-WorkingDirectory=/server-app
-ExecStart=/server-app/venv/bin/python src/server.py
+3. **Create a service file:**
+   ```bash
+   nano python-server.service
+   ```
 
-Restart=always
-RestartSec=120
+4. **Add the following content to the service file:**
+   ```ini
+   [Unit]
+   Description=A script for running the server as a daemon.
+   After=syslog.target network.target
 
-[Install]
-WantedBy=multi-user.target
+   [Service]
+   WorkingDirectory=/path_to_the_repo
+   ExecStart=/path_to_the_repo/venv/bin/python src/server.py
+   Restart=always
+   RestartSec=120
 
+   [Install]
+   WantedBy=multi-user.target
+   ```
 
- systemctl daemon-reload
+5. **Save and exit the editor.**
+
+6. **Reload the systemd daemon to apply changes:**
+   ```bash
+   systemctl daemon-reload
+   ```
+
+7. **Start the service:**
+   ```bash
+   systemctl start python-server
+   ```
+
+8. **Check the status of the service:**
+   ```bash
+   systemctl status python-server
+   ```
+
+By following these instructions, you can efficiently set up the project and ensure the server runs continuously as a background service.

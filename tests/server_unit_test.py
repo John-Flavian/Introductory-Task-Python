@@ -221,7 +221,7 @@ async def test_main() -> None:
     """
     server_mock = AsyncMock()
     server_mock.sockets = [MagicMock()]
-    server_mock.sockets[0].getsockname.return_value = ('localhost', 8080)
+    server_mock.sockets[0].getsockname.return_value = ('127.0.0.1', 8001)
 
     with patch('src.server.asyncio.start_server',
                return_value=server_mock) as start_server_mock:
@@ -231,8 +231,8 @@ async def test_main() -> None:
                 await server.main()
                 start_server_mock.assert_called_once_with(
                     server.handle_client,
-                    'localhost',
-                    8080,
+                    '127.0.0.1',
+                    8001,
                     ssl=None
                 )
                 server_mock.serve_forever.assert_called_once()
@@ -258,7 +258,7 @@ async def test_main_with_ssl() -> None:
     """
     server_mock = AsyncMock()
     server_mock.sockets = [MagicMock()]
-    server_mock.sockets[0].getsockname.return_value = ('localhost', 8080)
+    server_mock.sockets[0].getsockname.return_value = ('127.0.0.1', 8001)
     ssl_context_mock = MagicMock()
 
     with patch('src.server.asyncio.start_server',
@@ -269,8 +269,8 @@ async def test_main_with_ssl() -> None:
                 await server.main()
                 start_server_mock.assert_called_once_with(
                     server.handle_client,
-                    'localhost',
-                    8080,
+                    '127.0.0.1',
+                    8001,
                     ssl=ssl_context_mock
                 )
                 server_mock.serve_forever.assert_called_once()
