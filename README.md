@@ -1,8 +1,8 @@
-# Algo-Science-Assessment
+# Algorithmic Sciences Introductory Task
 
 ## Project Setup
 
-Follow these steps to set up and run the Algo-Science-Assessment project.
+Follow these steps to set up and run the Algorithmic-Sciences-Introductory-Task Project.
 
 ### Step 1: Create and Activate a Virtual Environment
 
