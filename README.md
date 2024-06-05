@@ -45,8 +45,8 @@ Update the configuration options in `config/config.json`:
 - `reread_on_query`: Boolean, defaults to `false`.
 - `server_host`: Server host.
 - `server_port`: Server port.
-- `client_host`: Server host.
-- `client_port`: Server port.
+- `client_host`: Client host.
+- `client_port`: Client port.
 - `prompt`: Boolean, defaults to `false`. If `true`, prompts the user to type in a search string.
 - `query`: Query string for the client script, default is `"hi"`.
 
