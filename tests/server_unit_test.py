@@ -82,28 +82,48 @@ async def test_handle_client_no_reread() -> None:
 async def test_handle_client_incomplete_read_error() -> None:
     """ Test the `handle_client` for handling `IncompleteReadError`. """
     reader = AsyncMock()
-    writer = AsyncMock()
+    writer = MagicMock()
     reader.read = AsyncMock(
         side_effect=asyncio.IncompleteReadError(partial=b'data', expected=10)
-        )
-    writer.get_extra_info = MagicMock(return_value=('127.0.0.1', 8001))
+    )
+    writer.get_extra_info = MagicMock(return_value=('127.0.0.1',))
+    writer.drain = AsyncMock()
+    writer.wait_closed = AsyncMock()
 
-    with pytest.raises(asyncio.IncompleteReadError):
+    incomplete_read_error_raised = False
+
+    try:
         await server.handle_client(reader, writer)
+    except asyncio.IncompleteReadError:
+        incomplete_read_error_raised = True
+
+    assert incomplete_read_error_raised, "IncompleteReadError was not raised"
+
+    writer.close.assert_called()
 
 
 @pytest.mark.asyncio
 async def test_handle_client_connection_reset_error() -> None:
     """ Test the `handle_client` for handling `ConnectionResetError`. """
     reader = AsyncMock()
-    writer = AsyncMock()
+    writer = MagicMock()
     reader.read = AsyncMock(
         side_effect=ConnectionResetError("Connection reset")
-        )
-    writer.get_extra_info = MagicMock(return_value=('127.0.0.1', 8001))
+    )
+    writer.get_extra_info = MagicMock(return_value=('127.0.0.1',))
+    writer.drain = AsyncMock()
+    writer.wait_closed = AsyncMock()
 
-    with pytest.raises(ConnectionResetError):
+    connection_reset_error_raised = False
+
+    try:
         await server.handle_client(reader, writer)
+    except ConnectionResetError:
+        connection_reset_error_raised = True
+
+    assert connection_reset_error_raised, "ConnectionResetError was not raised"
+
+    writer.close.assert_called()
 
 
 @pytest.mark.asyncio
