@@ -2,7 +2,7 @@
   "use_ssl": false,
   "certificate_file": "certs/certificate.pem",
   "key_file": "certs/key.pem",
-  "txt_file": "files/200k.txt",
+  "txt_file": "files/200k.txt", 
   "reread_on_query": false,
   "server_host": "127.0.0.1",
   "server_port": 8001,

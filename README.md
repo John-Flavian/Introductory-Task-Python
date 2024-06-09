@@ -59,7 +59,7 @@ python3 src/client.py
 ### Step 6: Run Unit Tests for the Server
 Execute unit tests for the server script:
 ```bash
-PYTHONPATH=. pytest tests/server_unit_test.py -s
+pytest -vvv
 ```
 
 ### Step 7: Run Load Tests for the Server

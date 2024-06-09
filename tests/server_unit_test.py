@@ -164,7 +164,7 @@ async def test_handle_client_incomplete_read_error() -> None:
     reader.read = AsyncMock(
         side_effect=asyncio.IncompleteReadError(partial=b'data', expected=10)
         )
-    writer.get_extra_info = MagicMock(return_value=('127.0.0.1', 12345))
+    writer.get_extra_info = MagicMock(return_value=('127.0.0.1', 8001))
 
     with pytest.raises(asyncio.IncompleteReadError):
         await server.handle_client(reader, writer)
@@ -196,7 +196,7 @@ async def test_handle_client_connection_reset_error() -> None:
     reader.read = AsyncMock(
         side_effect=ConnectionResetError("Connection reset")
         )
-    writer.get_extra_info = MagicMock(return_value=('127.0.0.1', 12345))
+    writer.get_extra_info = MagicMock(return_value=('127.0.0.1', 8001))
 
     with pytest.raises(ConnectionResetError):
         await server.handle_client(reader, writer)
