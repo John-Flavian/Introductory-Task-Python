@@ -5,7 +5,6 @@ import ssl
 import os
 from datetime import datetime
 import threading
-
 import time
 
 # Get the directory of the current script
@@ -20,6 +19,7 @@ config_dir_path = os.path.join(parent_dir, 'config/config.json')
 def load_config(config_path: str) -> dict[str, str]:
     """ Loads the configuration from a JSON file. """
     try:
+        # Load configuration
         with open(config_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
         return data or {}
@@ -50,7 +50,6 @@ config = load_config(config_dir_path)
 USE_SSL = config.get("use_ssl", False)
 CERTFILE = os.path.join(parent_dir, config.get("certificate_file", ''))
 KEYFILE = os.path.join(parent_dir, config.get("key_file", ''))
-DEV_MODE = config.get("development", False)
 BUFFER_SIZE = 1024
 HOST = config.get("server_host", "127.0.0.1")
 PORT = config.get("server_port", 8001)
@@ -105,6 +104,7 @@ async def handle_client(
     client_ip = writer.get_extra_info('peername')[0]
     try:
         while True:
+            # Read the message from the client
             data = await reader.read(BUFFER_SIZE)
             if not data:
                 break

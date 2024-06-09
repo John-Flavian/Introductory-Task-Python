@@ -68,9 +68,11 @@ async def send_message(message: str) -> None:
 
 async def main() -> None:
     """ Function to start the client. """
+    # Check if the prompt flag is set
     if config.get("prompt", False):
         search_text = input("Please enter the search text: ")
     else:
+        # Get the query from the config file
         search_text = config.get("query", "hi")
 
     await send_message(search_text)
