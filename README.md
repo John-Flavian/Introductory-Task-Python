@@ -1,4 +1,4 @@
-# Algorithmic Sciences Introductory Task
+# Introductory Task
 
 ## Project Setup
 
